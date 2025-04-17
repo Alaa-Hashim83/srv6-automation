@@ -1,0 +1,5 @@
+# requirements.txt
+requests
+click
+pytest
+pyyaml

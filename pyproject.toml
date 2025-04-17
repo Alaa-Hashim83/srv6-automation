@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "srv6_automation"
+version = "0.1.0"
+description = "A Python library for SRv6 automation and network validation"
+authors = [
+    { name="Alaa Hashim", email="your_email@example.com" }
+]
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.7"
+dependencies = [
+    "click",
+    "pyyaml",
+    "requests"
+]
+
+[project.urls]
+Homepage = "https://github.com/Alaa-Hashim83/srv6-automation"
