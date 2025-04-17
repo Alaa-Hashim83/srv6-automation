@@ -1,0 +1,43 @@
+Metadata-Version: 2.4
+Name: srv6_automation
+Version: 0.1.0
+Summary: A Python library for SRv6 automation and network validation
+Home-page: https://github.com/Alaa-Hashim83/srv6-automation
+Author: Alaa Hashim
+Author-email: Alaa Hashim <your_email@example.com>
+License: MIT
+Project-URL: Homepage, https://github.com/Alaa-Hashim83/srv6-automation
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+Requires-Dist: click
+Requires-Dist: pyyaml
+Requires-Dist: requests
+Dynamic: author
+Dynamic: home-page
+Dynamic: requires-python
+
+# SRv6 Automation with Python
+
+This project automates Segment Routing over IPv6 (SRv6) configuration and validation on Cisco IOS-XR devices using Python libraries like Netmiko and NAPALM.
+
+## Objectives
+- Automate the creation of SRv6 tunnels and locator configuration.
+- Validate configuration using CLI command outputs.
+- Simplify and speed up testing cycles for new IOS-XR builds.
+
+## Tools & Technologies
+- Python 3
+- Netmiko
+- NAPALM
+- Cisco IOS-XR
+- GitHub Actions (planned for CI testing)
+
+## Features
+- Auto-generates SRv6 configurations
+- Connects to routers via SSH
+- Validates forwarding plane status
+- Outputs logs and verification results
+
+## Example
+```bash
+python3 automate_srv6.py --device router1.yaml --config srv6_config.yaml

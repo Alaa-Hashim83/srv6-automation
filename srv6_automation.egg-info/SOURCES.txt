@@ -1,0 +1,11 @@
+README.md
+pyproject.toml
+setup.py
+srv6_automation/__init__.py
+srv6_automation/cli.py
+srv6_automation/core.py
+srv6_automation.egg-info/PKG-INFO
+srv6_automation.egg-info/SOURCES.txt
+srv6_automation.egg-info/dependency_links.txt
+srv6_automation.egg-info/requires.txt
+srv6_automation.egg-info/top_level.txt
