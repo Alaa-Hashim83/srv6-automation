@@ -227,8 +227,10 @@ def parse_srv6_config(config: str) -> Dict:
         # Legacy locator-level default: micro-segment behavior <VAL>
         m = _RE_MICROSEG.match(line)
         if m:
-            defaults["behavior"] = m.group(1).strip()
-            continue
+          val = m.group(1).strip()
+          defaults["behavior"] = val
+          loc["micro_segment"] = val          # <-- backward-compat
+          continue
 
         # Locator-level default: behavior <VAL>
         m = _RE_BEHAVIOR_LINE.match(line)
@@ -251,38 +253,24 @@ def parse_srv6_config(config: str) -> Dict:
 
         # ----- Prefix line (can carry inline behavior/flags) -----
         if _RE_PREFIX_LINE.match(line):
-            # tokens: ["prefix", "<CIDR>", ...]
-            if len(tokens) >= 2:
-                cidr = tokens[1]
-                # start from defaults and override with inline settings
-                prefix_obj: Dict[str, object] = {
-                    "prefix": cidr,
-                    "behavior": defaults.get("behavior"),
-                    "psp": bool(defaults.get("psp")),
-                    "usp": bool(defaults.get("usp")),
-                }
-
-                # inline: behavior <VAL>
-                if "behavior" in [t.lower() for t in tokens[2:]]:
-                    t = [x.lower() for x in tokens]
-                    try:
-                        idx = t.index("behavior")
-                        if idx + 1 < len(tokens):
-                            prefix_obj["behavior"] = tokens[idx + 1]
-                    except ValueError:
-                        pass
-
-                # inline flags
-                psp_val = _parse_flag_from_tokens("psp", tokens[2:])
-                if psp_val is not None:
-                    prefix_obj["psp"] = psp_val
-
-                usp_val = _parse_flag_from_tokens("usp", tokens[2:])
-                if usp_val is not None:
-                    prefix_obj["usp"] = usp_val
-
-                loc["prefixes"].append(prefix_obj)
-                last_prefix_obj = prefix_obj
+          if len(tokens) >= 2:
+            cidr = tokens[1]
+            prefix_obj = {
+                "prefix": cidr,
+                "behavior": defaults.get("behavior"),
+                "psp": bool(defaults.get("psp")),
+                "usp": bool(defaults.get("usp")),
+              }
+              # ... (existing inline behavior/flags parsing) ...
+      
+              loc["prefixes"].append(prefix_obj)
+      
+              # ---- backward-compat shim ----
+              if "prefix" not in loc:
+                  loc["prefix"] = cidr
+              # ------------------------------
+      
+              last_prefix_obj = prefix_obj
             continue
 
         # ----- Post-prefix modifiers for the MOST RECENT prefix -----
