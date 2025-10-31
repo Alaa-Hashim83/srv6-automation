@@ -253,24 +253,23 @@ def parse_srv6_config(config: str) -> Dict:
 
         # ----- Prefix line (can carry inline behavior/flags) -----
         if _RE_PREFIX_LINE.match(line):
-          if len(tokens) >= 2:
-            cidr = tokens[1]
-            prefix_obj = {
-                "prefix": cidr,
-                "behavior": defaults.get("behavior"),
-                "psp": bool(defaults.get("psp")),
-                "usp": bool(defaults.get("usp")),
-              }
-              # ... (existing inline behavior/flags parsing) ...
-      
-              loc["prefixes"].append(prefix_obj)
-      
-              # ---- backward-compat shim ----
-              if "prefix" not in loc:
-                  loc["prefix"] = cidr
-              # ------------------------------
-      
-              last_prefix_obj = prefix_obj
+            if len(tokens) >= 2:
+                cidr = tokens[1]
+                prefix_obj = {
+                    "prefix": cidr,
+                    "behavior": defaults.get("behavior"),
+                    "psp": bool(defaults.get("psp")),
+                    "usp": bool(defaults.get("usp")),
+                }
+            # ... (existing inline behavior/flags parsing) ...
+            loc["prefixes"].append(prefix_obj)
+
+            # ---- backward-compat shim ----
+            if "prefix" not in loc:
+                loc["prefix"] = cidr
+            # ------------------------------
+
+            last_prefix_obj = prefix_obj
             continue
 
         # ----- Post-prefix modifiers for the MOST RECENT prefix -----
