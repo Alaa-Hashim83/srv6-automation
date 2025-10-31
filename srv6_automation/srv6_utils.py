@@ -34,6 +34,7 @@ Output shape from parse_srv6_config():
 
 import re
 from typing import Dict
+import ipaddress
 
 # Pre-compile the IPv6 regex once for performance and clarity.
 # This is a SIMPLE matcher that covers:
@@ -62,6 +63,17 @@ def is_valid_ipv6(address: str) -> bool:
         bool: True if the address matches the simplified patterns; False otherwise.
     """
     return _IPV6_SIMPLE_RE.match(address) is not None
+
+def is_valid_ipv6_prefix(prefix: str) -> bool:
+    """
+    Validate IPv6 CIDR prefixes (e.g., '2001:db8::/48').
+    Uses strict=False so host bits are allowed.
+    """
+    try:
+        net = ipaddress.ip_network(prefix, strict=False)
+        return isinstance(net, ipaddress.IPv6Network)
+    except ValueError:
+        return False
 
 
 def run_srv6_test(prefix: str) -> str:
