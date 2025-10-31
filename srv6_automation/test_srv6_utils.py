@@ -1,5 +1,5 @@
 import pytest
-from srv6_utils import (
+from srv6_automation.srv6_utils import (
     is_valid_ipv6,
     is_valid_ipv6_prefix,
     run_srv6_test,
