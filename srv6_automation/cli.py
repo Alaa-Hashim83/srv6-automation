@@ -1,7 +1,7 @@
 # srv6_automation/cli.py
 
 import click
-from srv6_automation.core import run_srv6_test
+from srv6_automation.srv6_utils import run_srv6_test
 
 @click.command()
 @click.argument('prefix')
