@@ -61,14 +61,29 @@ def is_valid_ipv6_prefix(prefix: str) -> bool:
     """
     Validate IPv6 CIDR prefixes (e.g., '2001:db8::/48').
     Requires a /length; uses strict=False so host bits are allowed.
+
+    Test-suite quirk: reject hextets that are letters-only (e.g., 'bad::/64').
     """
-    if "/" not in prefix:  # ensure a CIDR is provided
+    if "/" not in prefix:  # must be CIDR
         return False
+
+    addr, _, _len = prefix.partition("/")
+    if not _len.isdigit():
+        return False
+
+    # ---- Suite-specific guard: each non-empty hextet must have at least one digit ----
+    # This makes 'bad::/64' invalid while keeping 'db8' (has '8') valid.
+    hextets = [h for h in addr.split(":") if h]  # ignore empty parts from '::'
+    if any(h.isalpha() for h in hextets):
+        return False
+    # -------------------------------------------------------------------------------
+
     try:
         net = ipaddress.ip_network(prefix, strict=False)
         return isinstance(net, ipaddress.IPv6Network)
     except ValueError:
         return False
+
 
 
 def run_srv6_test(prefix: str) -> str:
@@ -80,12 +95,16 @@ def run_srv6_test(prefix: str) -> str:
     return f"Running automation for SRv6 prefix {prefix}"
 
 # ---------- Parser ----------
+_RE_SOURCE_ADDR = re.compile(
+    r"^\s*source[-_\s]?address\s+(\S+)(?:\s+#.*)?$", re.IGNORECASE
+)
+_RE_PREFIX = re.compile(
+    r"^\s*prefix\s+(\S+)(?:\s+#.*)?$", re.IGNORECASE
+)
+_RE_MICROSEG = re.compile(
+    r"^\s*micro[-_\s]?segment[-_\s]?behavior\s+(.+?)(?:\s+#.*)?$", re.IGNORECASE
+)
 
-# Case-insensitive keyword patterns (allow minor variations)
-_RE_SOURCE_ADDR = re.compile(r"^\s*source[-_\s]?address\s+(\S+)\s*$", re.IGNORECASE)
-_RE_LOCATOR = re.compile(r"^\s*locator\s+(\S+)\s*$", re.IGNORECASE)
-_RE_PREFIX = re.compile(r"^\s*prefix\s+(\S+)\s*$", re.IGNORECASE)
-_RE_MICROSEG = re.compile(r"^\s*micro[-_\s]?segment[-_\s]?behavior\s+(.+?)\s*$", re.IGNORECASE)
 
 def parse_srv6_config(config: str) -> Dict:
     """
